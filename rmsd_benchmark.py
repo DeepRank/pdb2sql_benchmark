@@ -3,6 +3,7 @@ import subprocess as sp
 from pdb2sql.StructureSimilarity import StructureSimilarity
 import matplotlib.pyplot as plt
 import time
+import os 
 
 '''
 WHERE TO FIND HADDOCK DATA 
@@ -20,16 +21,17 @@ LOCAL
 Documents/projects/deeprank/data/HADDOCK/BM4_dimers/model_qualities/i-rmsd/water/<MOL>.irmsd
 '''
 
-BM4 = '/home/nico/Documents/projects/deeprank/data/HADDOCK/BM4_dimers/' 
-decoys = BM4 + '/decoys_pdbFLs/1AK4/water/'
-ref = BM4 + '/BM4_dimers_bound/pdbFLs_ori/1AK4.pdb'
 
+data =  os.path.join('data','1AK4')
+decoys = os.path.join(data, 'decoys')
+ref = os.path.join(os.path.join(data, 'ref'), '1AK4.pdb')
 
-decoy_list = sp.check_output('ls %s/*.pdb' %decoys,shell=True).decode('utf-8').split()
-
+print(data)
+# decoy_list = sp.check_output('dir %s/*.pdb' %decoys,shell=True).decode('utf-8').split()
+decoy_list = [ os.path.join(decoys,d) for d in  os.listdir(decoys) if d.endswith('.pdb')]
 
 haddock_data = {}
-haddock_files =  ['1AK4.Fnat','1AK4.lrmsd','1AK4.irmsd']
+haddock_files =    [  os.path.join(os.path.join(data,'haddock'),f) for f in ['1AK4.Fnat','1AK4.lrmsd','1AK4.irmsd'] ]
 
 
 for i,fname in enumerate(haddock_files):
@@ -51,7 +53,7 @@ for i,fname in enumerate(haddock_files):
 
 		haddock_data[mol_name][i] = float(line[1])
 
-
+print(haddock_data)
 nconf = len(haddock_data)
 deep = np.zeros((nconf,3))
 hdk = np.zeros((nconf,3))
@@ -60,17 +62,19 @@ deep_data = {}
 t0 = time.time()
 for i,decoy in enumerate(decoy_list):
 
+
+
 	print('\n-->' + decoy)
 
-	sim = StructureSimilarity(decoy,ref)
+	sim = StructureSimilarity(decoy,ref, enforce_residue_matching=False)
 	lrmsd = sim.compute_lrmsd_fast(method='svd',lzone='1AK4.lzone')
 	irmsd = sim.compute_irmsd_fast(method='svd',izone='1AK4.izone')
 	fnat = sim.compute_fnat_fast()#ref_pairs='1AK4.refpairs')
 	#fnat = sim.compute_Fnat_pdb2sql()
 	dockQ = sim.compute_DockQScore(fnat,lrmsd,irmsd)
 
-	mol_name = decoy.split('/')[-1].split('.')[0]
-
+	# mol_name = decoy.split('/')[-1].split('.')[0]
+	mol_name = os.path.basename(decoy).split('.')[0]
 	deep_data[mol_name] =  [fnat,lrmsd,irmsd]
 	np.savetxt(mol_name+'.LRMSD',[lrmsd])
 	np.savetxt(mol_name+'.IRMSD',[irmsd])
