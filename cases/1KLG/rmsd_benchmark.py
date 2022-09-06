@@ -5,14 +5,9 @@ import matplotlib.pyplot as plt
 import time
 import os 
 
-
-
-
 decoys = 'decoys'
 ref = os.path.join('ref', '1KLG.pdb')
 decoy_list = [ os.path.join(decoys,d) for d in  os.listdir(decoys) if d.endswith('.pdb')]
-
-
 
 deep_data = {}
 t0 = time.time()
