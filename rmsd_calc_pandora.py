@@ -5,9 +5,9 @@ Created on Wed Sep 7  16:58:29 2022
 
 @author: Farzaneh Parizi
 
-USAGE: python rmsd_calc_pandora.py  <indir>  <outdir>
+USAGE: python rmsd_calc_pandora.py  <indir>  <PANDORA_models_folder>
 
-python rmsd_calc_pandora.py ./cases/1KLG 1KLG_PANDORA_objects 
+python rmsd_calc_pandora.py cases/1KLG 1KLG_PANDORA_objects 
 
 """
 
