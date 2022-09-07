@@ -18,11 +18,6 @@ sys.path.append('/home/fmeiman/PANDORA')
 import PANDORA
 import csv
 
-#def calc_lrmsd(decoy_path, ref_path, atoms):
-#    sim =  StructureSimilarity(decoy_path, ref_path)
-#    lrmsd = sim.compute_lrmsd_pdb2sql(exportpath=None, method='svd', name = atoms)
-#
-#    return lrmsd
 
 indir=sys.argv[1]
 fol = sys.argv[2]
@@ -59,7 +54,7 @@ for model in case_dict:
     case_dict[model]['object'].calc_LRMSD('%s/%s.pdb' %(case_dir, target_id), atoms=['CA', 'C', 'O', 'N', 'CB'])
     case_dict[model]['BB_CB_lRMSD'] = case_dict[model]['object'].lrmsd
 
-#    case_dict[model]['object'].calc_LRMSD('%s/%s.pdb' %(case_dir, target_id), atoms=)
+#    case_dict[model]['object'].calc_LRMSD('%s/%s.pdb' %(case_dir, target_id), atoms=atoms)
 #    case_dict[model]['FA_lRMSD'] = case_dict[model]['object'].lrmsd
 
     del case_dict[model]['object']
@@ -77,7 +72,6 @@ with open(os.path.join(fol_path,'rmsds_and_final_scores.tsv'), 'wt') as outfile:
             tw.writerow([key, case_dict[key]['molpdf'], case_dict[key]['CA_lRMSD'],
                           'N/A', 'N/A', 'N/A'])
 
-#molsort = sorted(final_scores.items(), key=lambda x:x[1][0])
 with open(os.path.join(fol_path,'rmsds_topmolpdfs_'+ target_id + '.pkl'), 'wb') as dict_outpkl:
     pickle.dump(case_dict, dict_outpkl)
 
